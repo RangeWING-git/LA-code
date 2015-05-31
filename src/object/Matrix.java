@@ -1,7 +1,7 @@
+package object;
 import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.StringTokenizer;
-
 import exception.InputException;
 
 
@@ -228,7 +228,7 @@ public class Matrix implements LAObject{
 	 * @return Matrix
 	 */
 	public static Matrix inputMatrix(){
-		Scanner sc = LinearAlgebra.sc;	//입력 받을 Scanner
+		Scanner sc = main.LinearAlgebra.sc;	//입력 받을 Scanner
 		LinkedList<double[]> list = new LinkedList<double[]>(); 	//결과 list
 		StringTokenizer st;	//원소를 구분할 토크나이저
 		String line = ""; // 한 라인(row) 받을 스트링

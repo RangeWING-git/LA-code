@@ -1,3 +1,4 @@
+package object;
 
 public interface LAObject {
 	public abstract void print();

@@ -1,7 +1,10 @@
+package main;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
+import object.LAObject;
+import object.Matrix;
 import exception.SyntaxException;
 import exception.VariableException;
 
@@ -68,7 +71,27 @@ public class Interpreter {
 		}
 		//Method
 		else if(first.contains("(") && first.contains(")")){
+			if(cmd.size() > 1) throw new SyntaxException(command, "Unexpected sth after calling a method");
+			String str = cmd.get(0);
+			if(str.indexOf(")") != str.length()-1) throw new SyntaxException(command, "Unexpected sth after closing method"); 
+			int pIndex = str.indexOf("(");
+			String name = str.substring(0, pIndex);
+			if(findType(name) != METHOD){
+				throw new SyntaxException(name, "There is no method named " + name);
+			}
+			ArrayList<String> params = null;
+			//If parameters exists
+			if(pIndex < str.length() - 2){
+				String param = str.substring(pIndex+1, str.length());
+				StringTokenizer stParam = new StringTokenizer(param, ",");
+				params = new ArrayList<String>();
+				while(stParam.hasMoreTokens()){
+					params.add(stParam.nextToken());
+				}
+			}
 			
+			executeMethod(name, params);
+			//TODO
 		}
 		//Variable
 		else if(varTable.containsKey(first)){
@@ -173,7 +196,22 @@ public class Interpreter {
 				
 			case 2:
 				String name = cmd.get(1);
-				
+				switch(findType(name)){
+				case VARIABLE:
+					System.out.println(name + "(Variable) : ");
+					varTable.get(name).info();
+					break;
+				case COMMAND:
+					System.out.println(name + "(Command): " + cmdTable.get(name));
+					break;
+				case OPERATOR:
+					//TODO
+					break;
+				case METHOD:
+					break;
+				default:
+					System.out.println("There is nothing named " + name);
+				}
 				
 			default:
 				throw new SyntaxException(command, "Too many arguments for 'info'");	
@@ -181,6 +219,11 @@ public class Interpreter {
 		}
 		
 		return result;
+	}
+	
+	private LAObject executeMethod(String name, ArrayList<String> params){
+		//TODO
+		return null;
 	}
 	
 	
@@ -195,7 +238,9 @@ public class Interpreter {
 		//Find from variable
 		if(varTable.containsKey(name)) return VARIABLE;
 		else if(cmdTable.containsKey(name)) return COMMAND;
-		return -1;
+		else if(opTable.containsKey(name)) return OPERATOR;
+		else if(methodTable.containsKey(name)) return METHOD;
+		else return -1;
 	}
 	
 	private void addVar(String name, LAObject value){
